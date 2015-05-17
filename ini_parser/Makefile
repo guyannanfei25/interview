@@ -17,7 +17,7 @@ check : $(TARGET)
 	./$^
 
 $(TARGET) : $(OBJS)
-	$(CXX) $(OBJS) $(LDFLAGS) -o $@
+	$(CXX) $(OBJS) $(LDFLAGS) -pg -o $@
 
 -include $(DEPS)
 

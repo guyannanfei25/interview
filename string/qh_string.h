@@ -30,6 +30,8 @@ namespace qh
         char*  data_;
         size_t len_;
     };
+    inline bool operator==(const string&,const string&);
+    inline bool operator!=(const string&,const string&);
 }
 
 #endif

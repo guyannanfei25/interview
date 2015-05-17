@@ -100,12 +100,33 @@ namespace qh
     {
 #if 1
         //TODO 请面试者在这里添加自己的代码实现以完成所需功能
+        size_t pos = raw_url.find('?');
+        std::string content = raw_url.substr(pos+1);
+        std::vector<std::string> subcon;
+        StringSplit(content,'&',100,subcon);
+        int len = subcon.size();
+        int i = 0;
+        for(;i<len;i++)
+        {
+            std::string text = subcon[i];
+            size_t pos1 = text.find('=');
+            if(pos1 == std::string::npos)
+                continue;
+            std::string key = text.substr(0,pos1);
+            if(keys.find(key)!=keys.end())
+            {
+                if(pos1<text.size()-1)
+                    sub_url = text.substr(pos1+1,text.size());
+            }
+        }
+        subcon.clear();
 #else
         //这是一份参考实现，但在特殊情况下工作不能符合预期
         Tokener token(raw_url);
         token.skipTo('?');
         token.next(); //skip one char : '?' 
         std::string key;
+        std::string leftString;
         while (!token.isEnd()) {
             key = token.nextString('=');
             if (keys.find(key) != keys.end()) {
@@ -129,8 +150,27 @@ namespace qh
                     sub_url.assign(curpos, nreadable);
                 }
             }
+            /*
             token.skipTo('&');
             token.next();//skip one char : '&'
+            leftString.assign(token.getCurReadPos(),token.getReadableSize());
+            size_t pos1,pos2;
+            if(leftString.size()<=0)
+                break;
+            */
+            do
+            {
+                token.skipTo('&');
+                token.next();
+                if(token.getReadableSize()<=0)
+                    break;
+                size_t pos1,pos2;
+                leftString.assign(token.getCurReadPos(),token.getReadableSize());
+                pos1 = leftString.find_first_of('&');
+                pos2 = leftString.find_first_of('=');
+                if(pos1 == std::string::npos||pos2 == std::string::npos||(pos2!=std::string::npos&&pos1>pos2))
+                    break;
+            }while(true);
         }
 #endif
     }
